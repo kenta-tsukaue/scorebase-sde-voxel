@@ -28,9 +28,6 @@ def get_optimizer(config, params):
   if config.optim.optimizer == 'Adam':
     optimizer = optim.Adam(params, lr=config.optim.lr, betas=(config.optim.beta1, 0.999), eps=config.optim.eps,
                            weight_decay=config.optim.weight_decay)
-  else:
-    raise NotImplementedError(
-      f'Optimizer {config.optim.optimizer} not supported yet!')
 
   return optimizer
 
@@ -171,8 +168,6 @@ def get_step_fn(sde, train, optimize_fn=None, reduce_mean=False, continuous=True
       loss_fn = get_smld_loss_fn(sde, train, reduce_mean=reduce_mean)
     elif isinstance(sde, VPSDE):
       loss_fn = get_ddpm_loss_fn(sde, train, reduce_mean=reduce_mean)
-    else:
-      raise ValueError(f"Discrete training for {sde.__class__.__name__} is not recommended.")
 
   def step_fn(state, batch):
     """Running one step of training or evaluation.

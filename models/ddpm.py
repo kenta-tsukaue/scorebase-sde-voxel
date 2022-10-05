@@ -36,7 +36,7 @@ get_normalization = normalization.get_normalization
 default_initializer = layers.default_init
 
 
-@utils.register_model(name='ddpm')
+
 class DDPM(nn.Module):
   def __init__(self, config):
     super().__init__()

@@ -181,7 +181,7 @@ class subVPSDE(SDE):
   @property
   def T(self):
     return 1
-
+  
   def sde(self, x, t):
     beta_t = self.beta_0 + t * (self.beta_1 - self.beta_0)
     drift = -0.5 * beta_t[:, None, None, None] * x

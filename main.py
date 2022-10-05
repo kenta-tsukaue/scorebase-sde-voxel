@@ -26,9 +26,10 @@ import tensorflow as tf
 FLAGS = flags.FLAGS
 
 config_flags.DEFINE_config_file(
-  "config", None, "Training configuration.", lock_config=True)
-flags.DEFINE_string("workdir", None, "Work directory.")
-flags.DEFINE_enum("mode", None, ["train", "eval"], "Running mode: train or eval")
+  "config", "./configs/subvp/cifar10_ddpm_continuous.py", "Training configuration.", lock_config=True)
+
+flags.DEFINE_string("workdir", "workdir", "Work directory.")
+flags.DEFINE_enum("mode", "train", ["train", "eval"], "Running mode: train or eval")
 flags.DEFINE_string("eval_folder", "eval",
                     "The folder name for storing evaluation results")
 flags.mark_flags_as_required(["workdir", "config", "mode"])
@@ -53,7 +54,8 @@ def main(argv):
     # Run the evaluation pipeline
     run_lib.evaluate(FLAGS.config, FLAGS.workdir, FLAGS.eval_folder)
   else:
-    raise ValueError(f"Mode {FLAGS.mode} not recognized.")
+    print("yaa")
+    #raise ValueError(f"Mode {FLAGS.mode} not recognized.")
 
 
 if __name__ == "__main__":

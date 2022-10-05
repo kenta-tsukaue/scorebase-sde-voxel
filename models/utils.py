@@ -19,7 +19,7 @@
 import torch
 import sde_lib
 import numpy as np
-
+from .ddpm import DDPM
 
 _MODELS = {}
 
@@ -87,8 +87,10 @@ def get_ddpm_params(config):
 
 def create_model(config):
   """Create the score model."""
+  print("モデルの名前は",config.model.name)
   model_name = config.model.name
-  score_model = get_model(model_name)(config)
+  #score_model = get_model(model_name)(config)
+  score_model = DDPM(config)
   score_model = score_model.to(config.device)
   score_model = torch.nn.DataParallel(score_model)
   return score_model
