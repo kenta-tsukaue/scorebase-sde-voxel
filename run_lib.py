@@ -77,16 +77,20 @@ def train(config, workdir):
                                               uniform_dequantization=config.data.uniform_dequantization)
   
   
-  """このiterがどこから来ているのかわからない"""
   train_iter = iter(train_ds)  # pytype: disable=wrong-arg-types
   eval_iter = iter(eval_ds)  # pytype: disable=wrong-arg-types
-
+  batch = torch.from_numpy(next(train_iter)['image']._numpy()).to(config.device).float()
+  
+  print(batch[0])
+  for i in range(3):
+    for j in range(32):
+      print(batch[0][j])
 
   # Create data normalizer and its inverse
   scaler = datasets.get_data_scaler(config)
   inverse_scaler = datasets.get_data_inverse_scaler(config)
 
-  # Setup SDEs
+  # Setup SDEs(SDEの設定)
   if config.training.sde.lower() == 'vpsde':
     sde = sde_lib.VPSDE(beta_min=config.model.beta_min, beta_max=config.model.beta_max, N=config.model.num_scales)
     sampling_eps = 1e-3
@@ -102,9 +106,9 @@ def train(config, workdir):
 
   # Build one-step training and evaluation functions
   optimize_fn = losses.optimization_manager(config)
-  continuous = config.training.continuous#?
-  reduce_mean = config.training.reduce_mean#?
-  likelihood_weighting = config.training.likelihood_weighting#?
+  continuous = config.training.continuous
+  reduce_mean = config.training.reduce_mean
+  likelihood_weighting = config.training.likelihood_weighting
   
   train_step_fn = losses.get_step_fn(sde, train=True, optimize_fn=optimize_fn,
                                      reduce_mean=reduce_mean, continuous=continuous,
@@ -113,7 +117,6 @@ def train(config, workdir):
                                     reduce_mean=reduce_mean, continuous=continuous,
                                     likelihood_weighting=likelihood_weighting)
   
-  """サンプリングが何か分からない"""
   # Building sampling functions 
   if config.training.snapshot_sampling:
     sampling_shape = (config.training.batch_size, config.data.num_channels,
@@ -124,7 +127,10 @@ def train(config, workdir):
 
   # In case there are multiple hosts (e.g., TPU pods), only log to host 0
   logging.info("Starting training loop at step %d." % (initial_step,))
-
+  
+  
+    
+  """
   for step in range(0, num_train_steps + 1):
     # Convert data to JAX arrays and normalize them. Use ._numpy() to avoid copy.
     batch = torch.from_numpy(next(train_iter)['image']._numpy()).to(config.device).float()
@@ -172,6 +178,6 @@ def train(config, workdir):
         with tf.io.gfile.GFile(
             os.path.join(this_sample_dir, "sample.png"), "wb") as fout:
           save_image(image_grid, fout)
-    
+    """
     
 

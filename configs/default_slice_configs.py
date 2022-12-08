@@ -6,9 +6,9 @@ def get_default_configs():
   config = ml_collections.ConfigDict()
   # training
   config.training = training = ml_collections.ConfigDict()
-  config.training.batch_size = 128
+  config.training.batch_size = 32
   training.n_iters = 1300000
-  training.snapshot_freq = 50000
+  training.snapshot_freq = 50
   training.log_freq = 50
   training.eval_freq = 100
   ## store additional checkpoints for preemption in cloud computing environments
@@ -24,14 +24,14 @@ def get_default_configs():
   sampling.n_steps_each = 1
   sampling.noise_removal = True
   sampling.probability_flow = False
-  sampling.snr = 0.17
+  sampling.snr = 0.16
 
   # evaluation
   config.eval = evaluate = ml_collections.ConfigDict()
-  evaluate.begin_ckpt = 1
+  evaluate.begin_ckpt = 9
   evaluate.end_ckpt = 26
-  evaluate.batch_size = 1024
-  evaluate.enable_sampling = True
+  evaluate.batch_size = 8
+  evaluate.enable_sampling = False
   evaluate.num_samples = 50000
   evaluate.enable_loss = True
   evaluate.enable_bpd = False
@@ -39,17 +39,17 @@ def get_default_configs():
 
   # data
   config.data = data = ml_collections.ConfigDict()
-  data.dataset = 'CELEBA'
-  data.image_size = 64
+  data.dataset = 'SLICE'
+  data.image_size = 32
   data.random_flip = True
-  data.uniform_dequantization = False
   data.centered = False
+  data.uniform_dequantization = False
   data.num_channels = 3
 
   # model
   config.model = model = ml_collections.ConfigDict()
-  model.sigma_max = 90.
   model.sigma_min = 0.01
+  model.sigma_max = 50
   model.num_scales = 1000
   model.beta_min = 0.1
   model.beta_max = 20.
