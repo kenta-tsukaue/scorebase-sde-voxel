@@ -1,11 +1,15 @@
-ml-collections==0.1.0
-tensorflow-gan==2.0.0
-tensorflow_io
-tensorflow_datasets==3.1.0
-tensorflow==2.4.0
-tensorflow-addons==0.12.0
-tensorboard==2.4.0
-absl-py==0.10.0
-torch>=1.7.0
-torchvision
-ninja
+Python -V #3.9.12
+
+# Name                    Version                   Build  Channel
+absl-py                   1.2.0                    pypi_0    pypi
+ninja                     1.11.0               h924138e_0    conda-forge
+ml-collections            0.1.1                    pypi_0    pypi
+pytorch                   1.12.0          py3.9_cuda11.3_cudnn8.3.2_0    pytorch
+tensorflow                2.10.0                   pypi_0    pypi
+tensorflow-datasets       4.6.0                    pypi_0    pypi
+tensorflow-estimator      2.10.0                   pypi_0    pypi
+tensorflow-gan            2.1.0                    pypi_0    pypi
+tensorflow-hub            0.12.0                   pypi_0    pypi
+tensorflow-io-gcs-filesystem 0.27.0                   pypi_0    pypi
+tensorflow-metadata       1.10.0                   pypi_0    pypi
+tensorflow-probability    0.18.0                   pypi_0    pypi
