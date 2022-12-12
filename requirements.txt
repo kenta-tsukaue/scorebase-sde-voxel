@@ -8,3 +8,5 @@ pytorch                   1.12.0          py3.9_cuda11.3_cudnn8.3.2_0    pytorch
 tensorflow                2.10.0                   pypi_0    pypi
 tensorflow-datasets       4.6.0                    pypi_0    pypi
 tensorflow-gan            2.1.0                    pypi_0    pypi
+jax                       0.3.20             pyhd8ed1ab_0    conda-forge
+jaxlib                    0.3.20          cuda112py39h5d93514_200    conda-forge
