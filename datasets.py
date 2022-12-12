@@ -24,7 +24,10 @@ def get_data_scaler(config):
   """Data normalizer. Assume data are always in [0, 1]."""
   if config.data.centered:
     # Rescale to [-1, 1]
-    return lambda x: x * 2. - 1.
+    if config.data.dataset == "SLICE":
+      return lambda x: (x - 128) / 128
+    else:
+      return lambda x: x * 2. - 1.
   else:
     return lambda x: x
 
@@ -129,7 +132,7 @@ def get_dataset(config, uniform_dequantization=False, evaluation=False):
         img = (tf.random.uniform(img.shape, dtype=tf.float32) + img * 255.) / 256.
       return dict(image=img, label=None)
 
-  else:
+  elif config.data.dataset == "SLICE":
     def preprocess_fn(d):
       """Basic preprocessing function scales data to [0, 1) and randomly flips."""
       #print(d)
@@ -143,6 +146,17 @@ def get_dataset(config, uniform_dequantization=False, evaluation=False):
       """
 
       return dict(image=d['tensor'], label=d.get('label', None))
+  else:
+    def preprocess_fn(d):
+      """Basic preprocessing function scales data to [0, 1) and randomly flips."""
+      img = resize_op(d['image'])
+
+      if config.data.random_flip and not evaluation:
+        img = tf.image.random_flip_left_right(img)
+      if uniform_dequantization:
+        img = (tf.random.uniform(img.shape, dtype=tf.float32) + img * 255.) / 256.
+
+      return dict(image=img, label=d.get('label', None))
 
   def create_dataset(dataset_builder, split):
     dataset_options = tf.data.Options()
