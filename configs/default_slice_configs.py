@@ -44,7 +44,7 @@ def get_default_configs():
   data.random_flip = True
   data.centered = False
   data.uniform_dequantization = False
-  data.num_channels = 10
+  data.num_channels = 3
 
   # model
   config.model = model = ml_collections.ConfigDict()
