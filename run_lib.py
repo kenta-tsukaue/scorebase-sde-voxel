@@ -131,7 +131,7 @@ def train(config, workdir):
     batch = torch.from_numpy(next(train_iter)['image']._numpy()).to(config.device).float()
     #print(batch.shape)
     batch = batch.permute(0, 3, 1, 2)
-    #print(batch.shape)
+    print(batch[0])
     batch = scaler(batch)
 
 
