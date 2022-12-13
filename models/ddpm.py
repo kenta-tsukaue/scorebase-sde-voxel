@@ -41,19 +41,19 @@ class DDPM(nn.Module):
   def __init__(self, config):
     super().__init__()
     self.act = act = get_act(config)
-    self.register_buffer('sigmas', torch.tensor(utils.get_sigmas(config)))
+    self.register_buffer('sigmas', torch.tensor(utils.get_sigmas(config))) #sigma Falseなので使われない
 
-    self.nf = nf = config.model.nf
-    ch_mult = config.model.ch_mult
-    self.num_res_blocks = num_res_blocks = config.model.num_res_blocks
-    self.attn_resolutions = attn_resolutions = config.model.attn_resolutions
-    dropout = config.model.dropout
-    resamp_with_conv = config.model.resamp_with_conv
-    self.num_resolutions = num_resolutions = len(ch_mult)
+    self.nf = nf = config.model.nf #128
+    ch_mult = config.model.ch_mult #(1, 2, 2, 2)
+    self.num_res_blocks = num_res_blocks = config.model.num_res_blocks #2
+    self.attn_resolutions = attn_resolutions = config.model.attn_resolutions #(16,)
+    dropout = config.model.dropout #0.1
+    resamp_with_conv = config.model.resamp_with_conv #True
+    self.num_resolutions = num_resolutions = len(ch_mult) #????????????
     self.all_resolutions = all_resolutions = [config.data.image_size // (2 ** i) for i in range(num_resolutions)]
 
-    AttnBlock = functools.partial(layers.AttnBlock)
-    self.conditional = conditional = config.model.conditional
+    AttnBlock = functools.partial(layers.AttnBlock) #Channel-wise self-attention block.
+    self.conditional = conditional = config.model.conditional #True
     ResnetBlock = functools.partial(ResnetBlockDDPM, act=act, temb_dim=4 * nf, dropout=dropout)
     if conditional:
       # Condition on noise levels.
