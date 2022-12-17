@@ -45,6 +45,7 @@ def get_default_configs():
   data.centered = False
   data.uniform_dequantization = False
   data.num_channels = 64
+  data.data_file = "data_set_channel_64"
 
   # model
   config.model = model = ml_collections.ConfigDict()

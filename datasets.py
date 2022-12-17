@@ -104,7 +104,7 @@ def get_dataset(config, uniform_dequantization=False, evaluation=False):
       return tf.image.resize(img, [config.data.image_size, config.data.image_size], antialias=True)
 
   elif config.data.dataset == 'SLICE':
-    dataset_builder = tfds.builder('data_set_channel_32')
+    dataset_builder = tfds.builder(config.data.data_file)
     train_split_name = 'train'
     eval_split_name = 'test'
 
