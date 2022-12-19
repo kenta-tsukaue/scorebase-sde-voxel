@@ -613,7 +613,7 @@ class Downsample(nn.Module):
     # Emulate 'SAME' padding
     if self.with_conv:
 #      x = F.pad(x, (0, 0, 0, 1, 0, 1))  #  add z axis
-      x = F.pad(x, (0, 1, 0, 0, 0, 1))  #  add y axis
+#      x = F.pad(x, (0, 1, 0, 0, 0, 1))  #  add y axis
 #      print('at 614 x=',x.shape) # ; raise RuntimeError
       x = self.Conv_0(x)
 #      print('at 616 x=',x.shape) # ; raise RuntimeError
