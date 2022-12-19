@@ -51,7 +51,7 @@ class DDPM(nn.Module):
 #    print('attn_resolutions=',attn_resolutions)
     dropout = config.model.dropout # 0.1
     resamp_with_conv = config.model.resamp_with_conv # True
-    self.num_resolutions = num_resolutions = len(ch_mult)
+    self.num_resolutions = num_resolutions = len(ch_mult)# 4
     self.all_resolutions = all_resolutions = [config.data.image_size // (2 ** i) for i in range(num_resolutions)]
 
     AttnBlock = functools.partial(layers.AttnBlock)
@@ -145,6 +145,7 @@ class DDPM(nn.Module):
         print(modules[m_idx])
         h = modules[m_idx](hs[-1], temb)
 #        print('at 138',i_level,i_block,self.num_res_blocks,h.shape)
+        print("hの形は", h.shape)
         m_idx += 1
 #        if h.shape[-2] in self.attn_resolutions:  #  use y dim
         if h.shape[-3] in self.attn_resolutions:  #  use x dim
@@ -152,6 +153,7 @@ class DDPM(nn.Module):
           print("attn_resolutions入りまーす")
           h = modules[m_idx](h)
           print(modules[m_idx])
+          print("hの形は", h.shape)
           m_idx += 1
         
         hs.append(h)
@@ -159,10 +161,11 @@ class DDPM(nn.Module):
 #        print('at 148',i_level,i_block,h.shape); sys.stdout.flush()
         print("num_resolution入りまーす")
         print(modules[m_idx])
+        print("hの形は", h.shape)
         hs.append(modules[m_idx](hs[-1]))
         m_idx += 1
     
-
+    print("ダウンサンプリング終了")
     h = hs[-1]
 #    print('at 149',h.shape); sys.stdout.flush()
     h = modules[m_idx](h, temb)
