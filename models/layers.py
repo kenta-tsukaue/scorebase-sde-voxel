@@ -623,7 +623,7 @@ class Downsample(nn.Module):
 
 #    print('x=',x.shape,(B,C,H,W,D)); raise RuntimeError
 #    assert x.shape == (B, C, H // 2, W // 2, D // 1)  #  add z axis
-    assert x.shape == (B, C, H // 2, W // 2, D // 2)  #  add y axis
+#    assert x.shape == (B, C, H // 2, W // 2, D // 2)  #  add y axis
     return x
 
 
