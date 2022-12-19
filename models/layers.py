@@ -612,10 +612,10 @@ class Downsample(nn.Module):
     B, C, H, W, D = x.shape
     # Emulate 'SAME' padding
     if self.with_conv:
-      print("pad前", x.shape)
+      #print("pad前", x.shape)
 #      x = F.pad(x, (0, 0, 0, 1, 0, 1))  #  add z axis
       x = F.pad(x, (0, 1, 0, 1, 0, 1))  
-      print("padによる効果を表示", x.shape)
+      #print("padによる効果を表示", x.shape)
 #      print('at 614 x=',x.shape) # ; raise RuntimeError
       x = self.Conv_0(x)
 #      print('at 616 x=',x.shape) # ; raise RuntimeError
