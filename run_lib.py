@@ -133,7 +133,7 @@ def train(config, workdir):
     batch = batch.permute(0, 3, 1, 2)
     batch = scaler(batch)
     batch = torch.unsqueeze(batch,dim=-4)  #  add channel axis for debug
-    print(batch.shape)
+    #print(batch.shape)
     """バッチの詳細を表示するためのもの
     for i in range(3):
       for j in range(32):

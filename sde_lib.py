@@ -196,6 +196,8 @@ class subVPSDE(SDE):
     return mean, std
 
   def prior_sampling(self, shape):
+    print(shape)
+    print(torch.randn(*shape).shape)
     return torch.randn(*shape)
 
   def prior_logp(self, z):
