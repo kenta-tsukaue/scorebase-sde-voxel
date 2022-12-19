@@ -154,7 +154,6 @@ class DDPM(nn.Module):
         hs.append(modules[m_idx](hs[-1]))
         m_idx += 1
     
-    print("hsたちは", hs)
 
     h = hs[-1]
 #    print('at 149',h.shape); sys.stdout.flush()
