@@ -112,7 +112,7 @@ class DDPM(nn.Module):
   def forward(self, x, labels):
     modules = self.all_modules
     print("モジュールたちは\n",modules)
-    print(h.shape)
+    
     m_idx = 0
     if self.conditional: #True
       # timestep/scale embedding
@@ -135,6 +135,7 @@ class DDPM(nn.Module):
 
     # Downsampling block
 #    print('at 132',h.shape)
+    print("hの形は", h.shape)
     hs = [modules[m_idx](h)]
 #    print('at 134',hs[-1].shape)
     m_idx += 1
