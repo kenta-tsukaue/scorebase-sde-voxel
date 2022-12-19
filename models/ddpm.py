@@ -168,7 +168,7 @@ class DDPM(nn.Module):
         print('at 160',i_level,i_block,h.shape)
         print("hの形は" + str(h.shape))
         print("hs.popの形は" + str(hs.pop().shape))
-        print("catは", torch.cat([h, hs.pop()], dim=1))
+        print("catは", torch.cat([h, hs.pop()], dim=1).shape)
         h = modules[m_idx](torch.cat([h, hs.pop()], dim=1), temb)
         m_idx += 1
 #      if h.shape[-2] in self.attn_resolutions:  #  use y dim
