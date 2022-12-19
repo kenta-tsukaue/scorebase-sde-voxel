@@ -84,7 +84,7 @@ def get_sde_loss_fn(sde, train, reduce_mean=True, continuous=True, likelihood_we
     z = torch.randn_like(batch) #zは加えるノイズのこと
 
     mean, std = sde.marginal_prob(batch, t)
-    perturbed_data = mean + std[:, None, None, None] * z
+    perturbed_data = mean + std[:, None, None, None, None] * z
     print("データの形は" + str(perturbed_data.shape))
     score = score_fn(perturbed_data, t)#DDPMに渡すのはノイズが加えられたデータ
     #このscoreは結局何を出しているかと言うと、加えたノイズを出している
