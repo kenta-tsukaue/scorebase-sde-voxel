@@ -118,7 +118,7 @@ def ncsn_conv3x3(in_planes, out_planes, stride=1, bias=True, dilation=1, init_sc
 def ddpm_conv3x3(in_planes, out_planes, stride=1, bias=True, dilation=1, init_scale=1., padding=1):
   """3x3 convolution with DDPM initialization."""
 #  conv = nn.Conv3d(in_planes, out_planes, kernel_size=(3,3,1), stride=(stride,stride,1), padding=(padding,padding,0),  #  add z axis
-  conv = nn.Conv3d(in_planes, out_planes, kernel_size=(3,1,3), stride=(stride,1,stride), padding=(padding,0,padding),
+  conv = nn.Conv3d(in_planes, out_planes, kernel_size=(3,3,3), stride=(stride,stride,stride), padding=(padding,padding,padding),
                    dilation=dilation, bias=bias)
   conv.weight.data = default_init(init_scale)(conv.weight.data.shape)
   nn.init.zeros_(conv.bias)

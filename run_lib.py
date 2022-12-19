@@ -131,7 +131,8 @@ def train(config, workdir):
     batch = torch.from_numpy(next(train_iter)['image']._numpy()).to(config.device).float()
     #print(batch.shape)
     batch = batch.permute(0, 3, 1, 2)
-
+    batch = scaler(batch)
+    batch = torch.unsqueeze(batch,dim=-4)  #  add channel axis for debug
     """バッチの詳細を表示するためのもの
     for i in range(3):
       for j in range(32):
@@ -154,6 +155,7 @@ def train(config, workdir):
       eval_batch = torch.from_numpy(next(eval_iter)['image']._numpy()).to(config.device).float()
       eval_batch = eval_batch.permute(0, 3, 1, 2)
       eval_batch = scaler(eval_batch)
+      batch = torch.unsqueeze(batch,dim=-4)  #  add channel axis for debug
       eval_loss = eval_step_fn(state, eval_batch)
       logging.info("step: %d, eval_loss: %.5e" % (step, eval_loss.item()))
 
