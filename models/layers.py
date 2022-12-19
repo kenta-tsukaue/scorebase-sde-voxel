@@ -614,7 +614,7 @@ class Downsample(nn.Module):
     if self.with_conv:
       print("pad前", x.shape)
 #      x = F.pad(x, (0, 0, 0, 1, 0, 1))  #  add z axis
-      x = F.pad(x, (0, 1, 0, 0, 0, 1))  #  add y axis
+      x = F.pad(x, (0, 1, 0, 1, 0, 1))  
       print("padによる効果を表示", x.shape)
 #      print('at 614 x=',x.shape) # ; raise RuntimeError
       x = self.Conv_0(x)
