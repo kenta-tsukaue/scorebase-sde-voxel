@@ -146,7 +146,7 @@ class DDPM(nn.Module):
       # Residual blocks for this resolution
       for i_block in range(self.num_res_blocks):
         #print("\n\n\n\n=========================始まりまーす====================")
-        print(modules[m_idx])
+        #print(modules[m_idx])
         h = modules[m_idx](hs[-1], temb)
 #        print('at 138',i_level,i_block,self.num_res_blocks,h.shape)
         #print("hの形は", h.shape)
