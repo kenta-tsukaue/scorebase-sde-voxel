@@ -204,7 +204,7 @@ class DDPM(nn.Module):
         h = modules[m_idx](h)
         print("hの形は", h.shape)
         m_idx += 1
-    print("ダウンサンプリング終了")
+    print("アップサンプリング終了")
     assert not hs
     h = self.act(modules[m_idx](h))
     m_idx += 1
