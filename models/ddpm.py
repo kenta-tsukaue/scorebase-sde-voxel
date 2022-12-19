@@ -44,20 +44,20 @@ class DDPM(nn.Module):
     self.act = act = get_act(config)
     self.register_buffer('sigmas', torch.tensor(utils.get_sigmas(config)))
 
-    self.nf = nf = config.model.nf
-    ch_mult = config.model.ch_mult
-    self.num_res_blocks = num_res_blocks = config.model.num_res_blocks
-    self.attn_resolutions = attn_resolutions = config.model.attn_resolutions
+    self.nf = nf = config.model.nf # 128
+    ch_mult = config.model.ch_mult # (1, 2, 2, 2)
+    self.num_res_blocks = num_res_blocks = config.model.num_res_blocks #2
+    self.attn_resolutions = attn_resolutions = config.model.attn_resolutions #(16,)
 #    print('attn_resolutions=',attn_resolutions)
-    dropout = config.model.dropout
-    resamp_with_conv = config.model.resamp_with_conv
+    dropout = config.model.dropout # 0.1
+    resamp_with_conv = config.model.resamp_with_conv # True
     self.num_resolutions = num_resolutions = len(ch_mult)
     self.all_resolutions = all_resolutions = [config.data.image_size // (2 ** i) for i in range(num_resolutions)]
 
     AttnBlock = functools.partial(layers.AttnBlock)
-    self.conditional = conditional = config.model.conditional
+    self.conditional = conditional = config.model.conditional # True
     ResnetBlock = functools.partial(ResnetBlockDDPM, act=act, temb_dim=4 * nf, dropout=dropout)
-    if conditional:
+    if conditional: #True
       # Condition on noise levels.
       modules = [nn.Linear(nf, nf * 4)]
       modules[0].weight.data = default_initializer()(modules[0].weight.data.shape)
@@ -66,8 +66,8 @@ class DDPM(nn.Module):
       modules[1].weight.data = default_initializer()(modules[1].weight.data.shape)
       nn.init.zeros_(modules[1].bias)
 
-    self.centered = config.data.centered
-    channels = config.data.num_channels
+    self.centered = config.data.centered #False
+    channels = config.data.num_channels #1
 
     # Downsampling block
     modules.append(conv3x3(channels, nf))
@@ -92,7 +92,7 @@ class DDPM(nn.Module):
     modules.append(ResnetBlock(in_ch=in_ch))
 
     # Upsampling block
-    for i_level in reversed(range(num_resolutions)):
+    for i_level in reversed(range(num_resolutions)):#8
       for i_block in range(num_res_blocks + 1):
         out_ch = nf * ch_mult[i_level]
         modules.append(ResnetBlock(in_ch=in_ch + hs_c.pop(), out_ch=out_ch))
@@ -112,7 +112,7 @@ class DDPM(nn.Module):
   def forward(self, x, labels):
     modules = self.all_modules
     m_idx = 0
-    if self.conditional:
+    if self.conditional: #True
       # timestep/scale embedding
       timesteps = labels
       temb = layers.get_timestep_embedding(timesteps, self.nf)
@@ -166,6 +166,8 @@ class DDPM(nn.Module):
     for i_level in reversed(range(self.num_resolutions)):
       for i_block in range(self.num_res_blocks + 1):
 #        print('at 160',i_level,i_block,h.shape)
+        print("hの形は" + str(h.shape))
+        print("hs.popの形は" + str(hs.pop().shape))
         h = modules[m_idx](torch.cat([h, hs.pop()], dim=1), temb)
         m_idx += 1
 #      if h.shape[-2] in self.attn_resolutions:  #  use y dim
