@@ -19,6 +19,7 @@
 This code is the pytorch equivalent of:
 https://github.com/hojonathanho/diffusion/blob/master/diffusion_tf/models/unet.py
 """
+import sys
 import torch
 import torch.nn as nn
 import functools
@@ -41,19 +42,20 @@ class DDPM(nn.Module):
   def __init__(self, config):
     super().__init__()
     self.act = act = get_act(config)
-    self.register_buffer('sigmas', torch.tensor(utils.get_sigmas(config))) #sigma Falseなので使われない
+    self.register_buffer('sigmas', torch.tensor(utils.get_sigmas(config)))
 
-    self.nf = nf = config.model.nf #128
-    ch_mult = config.model.ch_mult #(1, 2, 2, 2)
-    self.num_res_blocks = num_res_blocks = config.model.num_res_blocks #2
-    self.attn_resolutions = attn_resolutions = config.model.attn_resolutions #(16,)
-    dropout = config.model.dropout #0.1
-    resamp_with_conv = config.model.resamp_with_conv #True
-    self.num_resolutions = num_resolutions = len(ch_mult) #????????????
+    self.nf = nf = config.model.nf
+    ch_mult = config.model.ch_mult
+    self.num_res_blocks = num_res_blocks = config.model.num_res_blocks
+    self.attn_resolutions = attn_resolutions = config.model.attn_resolutions
+#    print('attn_resolutions=',attn_resolutions)
+    dropout = config.model.dropout
+    resamp_with_conv = config.model.resamp_with_conv
+    self.num_resolutions = num_resolutions = len(ch_mult)
     self.all_resolutions = all_resolutions = [config.data.image_size // (2 ** i) for i in range(num_resolutions)]
 
-    AttnBlock = functools.partial(layers.AttnBlock) #Channel-wise self-attention block.
-    self.conditional = conditional = config.model.conditional #True
+    AttnBlock = functools.partial(layers.AttnBlock)
+    self.conditional = conditional = config.model.conditional
     ResnetBlock = functools.partial(ResnetBlockDDPM, act=act, temb_dim=4 * nf, dropout=dropout)
     if conditional:
       # Condition on noise levels.
@@ -120,6 +122,7 @@ class DDPM(nn.Module):
       m_idx += 1
     else:
       temb = None
+#    print('at 124 temb=',temb.shape)
 
     if self.centered:
       # Input is in [-1, 1]
@@ -129,22 +132,29 @@ class DDPM(nn.Module):
       h = 2 * x - 1.
 
     # Downsampling block
+#    print('at 132',h.shape)
     hs = [modules[m_idx](h)]
+#    print('at 134',hs[-1].shape)
     m_idx += 1
     for i_level in range(self.num_resolutions):
       # Residual blocks for this resolution
       for i_block in range(self.num_res_blocks):
         h = modules[m_idx](hs[-1], temb)
+#        print('at 138',i_level,i_block,self.num_res_blocks,h.shape)
         m_idx += 1
-        if h.shape[-1] in self.attn_resolutions:
+#        if h.shape[-2] in self.attn_resolutions:  #  use y dim
+        if h.shape[-3] in self.attn_resolutions:  #  use x dim
+#          print('at 143',h.shape); sys.stdout.flush()
           h = modules[m_idx](h)
           m_idx += 1
         hs.append(h)
       if i_level != self.num_resolutions - 1:
+#        print('at 148',i_level,i_block,h.shape); sys.stdout.flush()
         hs.append(modules[m_idx](hs[-1]))
         m_idx += 1
 
     h = hs[-1]
+#    print('at 149',h.shape); sys.stdout.flush()
     h = modules[m_idx](h, temb)
     m_idx += 1
     h = modules[m_idx](h)
@@ -155,9 +165,11 @@ class DDPM(nn.Module):
     # Upsampling block
     for i_level in reversed(range(self.num_resolutions)):
       for i_block in range(self.num_res_blocks + 1):
+#        print('at 160',i_level,i_block,h.shape)
         h = modules[m_idx](torch.cat([h, hs.pop()], dim=1), temb)
         m_idx += 1
-      if h.shape[-1] in self.attn_resolutions:
+#      if h.shape[-2] in self.attn_resolutions:  #  use y dim
+      if h.shape[-3] in self.attn_resolutions:  #  use x dim
         h = modules[m_idx](h)
         m_idx += 1
       if i_level != 0:

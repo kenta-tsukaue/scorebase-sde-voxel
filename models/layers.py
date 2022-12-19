@@ -117,7 +117,8 @@ def ncsn_conv3x3(in_planes, out_planes, stride=1, bias=True, dilation=1, init_sc
 
 def ddpm_conv3x3(in_planes, out_planes, stride=1, bias=True, dilation=1, init_scale=1., padding=1):
   """3x3 convolution with DDPM initialization."""
-  conv = nn.Conv2d(in_planes, out_planes, kernel_size=3, stride=stride, padding=padding,
+#  conv = nn.Conv3d(in_planes, out_planes, kernel_size=(3,3,1), stride=(stride,stride,1), padding=(padding,padding,0),  #  add z axis
+  conv = nn.Conv3d(in_planes, out_planes, kernel_size=(3,1,3), stride=(stride,1,stride), padding=(padding,0,padding),
                    dilation=dilation, bias=bias)
   conv.weight.data = default_init(init_scale)(conv.weight.data.shape)
   nn.init.zeros_(conv.bias)
@@ -549,10 +550,10 @@ class NIN(nn.Module):
     self.W = nn.Parameter(default_init(scale=init_scale)((in_dim, num_units)), requires_grad=True)
     self.b = nn.Parameter(torch.zeros(num_units), requires_grad=True)
 
-  def forward(self, x):
-    x = x.permute(0, 2, 3, 1)
+  def forward(self, x): #  x=(B,C,H,W)
+    x = x.permute(0, 2, 3, 4, 1) # x=(B,H,W,C), (0,2,3,4,1)
     y = contract_inner(x, self.W) + self.b
-    return y.permute(0, 3, 1, 2)
+    return y.permute(0, 4, 1, 2, 3) # x=(B,C,H,W), (0,4,1,2,3)
 
 
 class AttnBlock(nn.Module):
@@ -566,17 +567,20 @@ class AttnBlock(nn.Module):
     self.NIN_3 = NIN(channels, channels, init_scale=0.)
 
   def forward(self, x):
-    B, C, H, W = x.shape
-    h = self.GroupNorm_0(x)
+    B, C, H, W, D = x.shape
+    h = self.GroupNorm_0(x)  #  h.shape=x.shape
+#    print('layers.py 571 h.shape=',h.shape,x.shape); raise RuntimeError
     q = self.NIN_0(h)
     k = self.NIN_1(h)
     v = self.NIN_2(h)
 
-    w = torch.einsum('bchw,bcij->bhwij', q, k) * (int(C) ** (-0.5))
-    w = torch.reshape(w, (B, H, W, H * W))
+    w = torch.einsum('bchwd,bcijk->bhwdijk', q, k) * (int(C) ** (-0.5))
+#    w = torch.einsum('bchw,bcij->bhwij', q, k) * (int(C) ** (-0.5))
+    w = torch.reshape(w, (B, H, W, D, H * W * D)) #  (B,H,W,D,H*W*D)
     w = F.softmax(w, dim=-1)
-    w = torch.reshape(w, (B, H, W, H, W))
-    h = torch.einsum('bhwij,bcij->bchw', w, v)
+    w = torch.reshape(w, (B, H, W, D, H, W, D))  #  (B,H,W,D,H,W,D)
+#    h = torch.einsum('bhwij,bcij->bchw', w, v) # 'bhwdijk,bcijk->bchwd'
+    h = torch.einsum('bhwdijk,bcijk->bchwd', w, v) 
     h = self.NIN_3(h)
     return x + h
 
@@ -589,8 +593,9 @@ class Upsample(nn.Module):
     self.with_conv = with_conv
 
   def forward(self, x):
-    B, C, H, W = x.shape
-    h = F.interpolate(x, (H * 2, W * 2), mode='nearest')
+    B, C, H, W, D = x.shape
+#    h = F.interpolate(x, (H * 2, W * 2, D * 1), mode='nearest')  #  add z axis
+    h = F.interpolate(x, (H * 2, W * 1, D * 2), mode='nearest')  #  add y axis
     if self.with_conv:
       h = self.Conv_0(h)
     return h
@@ -604,15 +609,21 @@ class Downsample(nn.Module):
     self.with_conv = with_conv
 
   def forward(self, x):
-    B, C, H, W = x.shape
+    B, C, H, W, D = x.shape
     # Emulate 'SAME' padding
     if self.with_conv:
-      x = F.pad(x, (0, 1, 0, 1))
+#      x = F.pad(x, (0, 0, 0, 1, 0, 1))  #  add z axis
+      x = F.pad(x, (0, 1, 0, 0, 0, 1))  #  add y axis
+#      print('at 614 x=',x.shape) # ; raise RuntimeError
       x = self.Conv_0(x)
+#      print('at 616 x=',x.shape) # ; raise RuntimeError
     else:
       x = F.avg_pool2d(x, kernel_size=2, stride=2, padding=0)
+#      print('at 619 x=',x.shape) # ; raise RuntimeError
 
-    assert x.shape == (B, C, H // 2, W // 2)
+#    print('x=',x.shape,(B,C,H,W,D)); raise RuntimeError
+#    assert x.shape == (B, C, H // 2, W // 2, D // 1)  #  add z axis
+    assert x.shape == (B, C, H // 2, W // 1, D // 2)  #  add y axis
     return x
 
 
@@ -643,14 +654,15 @@ class ResnetBlockDDPM(nn.Module):
     self.conv_shortcut = conv_shortcut
 
   def forward(self, x, temb=None):
-    B, C, H, W = x.shape
+    B, C, H, W, D = x.shape
     assert C == self.in_ch
     out_ch = self.out_ch if self.out_ch else self.in_ch
     h = self.act(self.GroupNorm_0(x))
+#    print('h=',h.shape,x.shape); raise RuntimeError
     h = self.Conv_0(h)
     # Add bias to each feature map conditioned on the time embedding
     if temb is not None:
-      h += self.Dense_0(self.act(temb))[:, :, None, None]
+      h += self.Dense_0(self.act(temb))[:, :, None, None, None]
     h = self.act(self.GroupNorm_1(h))
     h = self.Dropout_0(h)
     h = self.Conv_1(h)
