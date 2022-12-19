@@ -140,17 +140,24 @@ class DDPM(nn.Module):
     for i_level in range(self.num_resolutions):
       # Residual blocks for this resolution
       for i_block in range(self.num_res_blocks):
+        print("始まりまーす")
+        print(modules[m_idx])
         h = modules[m_idx](hs[-1], temb)
 #        print('at 138',i_level,i_block,self.num_res_blocks,h.shape)
         m_idx += 1
 #        if h.shape[-2] in self.attn_resolutions:  #  use y dim
         if h.shape[-3] in self.attn_resolutions:  #  use x dim
 #          print('at 143',h.shape); sys.stdout.flush()
+          print("attn_resolutions入りまーす")
           h = modules[m_idx](h)
+          print(modules[m_idx])
           m_idx += 1
+        
         hs.append(h)
       if i_level != self.num_resolutions - 1:
 #        print('at 148',i_level,i_block,h.shape); sys.stdout.flush()
+        print("num_resolution入りまーす")
+        print(modules[m_idx])
         hs.append(modules[m_idx](hs[-1]))
         m_idx += 1
     
