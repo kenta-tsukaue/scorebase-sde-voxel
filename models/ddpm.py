@@ -178,21 +178,31 @@ class DDPM(nn.Module):
     m_idx += 1
 
     # Upsampling block
+    print("====================アップサンプリング始まります！===================")
     for i_level in reversed(range(self.num_resolutions)):
       for i_block in range(self.num_res_blocks + 1):
-        print('at 160',i_level,i_block,h.shape)
-        print("hs.popの形は" + str(hs[-1].shape))
+        print("\n\n\n\n=========================始まりまーす====================")
+        print('at 160',i_level,i_block,)
+        print("hの形は", h.shape)
+        print("hs.popの形は", hs[-1].shape)
         print("catは", torch.cat([h, hs[-1]], dim=1).shape)
+        print(modules[m_idx])
         h = modules[m_idx](torch.cat([h, hs.pop()], dim=1), temb)
+        print("hの形は", h.shape)
         m_idx += 1
 #      if h.shape[-2] in self.attn_resolutions:  #  use y dim
       if h.shape[-3] in self.attn_resolutions:  #  use x dim
+        print("attn_resolutions入りまーす")
+        print(modules[m_idx])
         h = modules[m_idx](h)
+        print("hの形は", h.shape)
         m_idx += 1
       if i_level != 0:
+        print(modules[m_idx])
         h = modules[m_idx](h)
+        print("hの形は", h.shape)
         m_idx += 1
-    print("aa")
+    print("ダウンサンプリング終了")
     assert not hs
     h = self.act(modules[m_idx](h))
     m_idx += 1
