@@ -112,6 +112,7 @@ class DDPM(nn.Module):
   def forward(self, x, labels):
     modules = self.all_modules
     print("モジュールたちは\n",modules)
+    print(h.shape)
     m_idx = 0
     if self.conditional: #True
       # timestep/scale embedding
