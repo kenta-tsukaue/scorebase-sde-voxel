@@ -192,7 +192,7 @@ class DDPM(nn.Module):
       if i_level != 0:
         h = modules[m_idx](h)
         m_idx += 1
-
+    print("aa")
     assert not hs
     h = self.act(modules[m_idx](h))
     m_idx += 1
