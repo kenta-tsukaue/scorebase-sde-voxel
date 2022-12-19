@@ -191,7 +191,7 @@ class subVPSDE(SDE):
 
   def marginal_prob(self, x, t):
     log_mean_coeff = -0.25 * t ** 2 * (self.beta_1 - self.beta_0) - 0.5 * t * self.beta_0
-    mean = torch.exp(log_mean_coeff)[:, None, None, None] * x
+    mean = torch.exp(log_mean_coeff)[:, None, None, None, None] * x
     std = 1 - torch.exp(2. * log_mean_coeff)
     return mean, std
 
