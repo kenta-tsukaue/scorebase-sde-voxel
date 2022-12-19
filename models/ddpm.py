@@ -165,7 +165,7 @@ class DDPM(nn.Module):
     # Upsampling block
     for i_level in reversed(range(self.num_resolutions)):
       for i_block in range(self.num_res_blocks + 1):
-#        print('at 160',i_level,i_block,h.shape)
+        print('at 160',i_level,i_block,h.shape)
         print("hの形は" + str(h.shape))
         print("hs.popの形は" + str(hs.pop().shape))
         h = modules[m_idx](torch.cat([h, hs.pop()], dim=1), temb)
