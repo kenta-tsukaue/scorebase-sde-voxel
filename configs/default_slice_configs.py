@@ -40,11 +40,11 @@ def get_default_configs():
   # data
   config.data = data = ml_collections.ConfigDict()
   data.dataset = 'SLICE'
-  data.image_size = 64
+  data.image_size = 32
   data.random_flip = True
   data.centered = False
   data.uniform_dequantization = False
-  data.num_channels = 64
+  data.num_channels = 1
   data.data_file = "data_set_channel_32"
 
   # model
