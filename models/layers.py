@@ -654,7 +654,6 @@ class ResnetBlockDDPM(nn.Module):
     self.conv_shortcut = conv_shortcut
 
   def forward(self, x, temb=None):
-    print(x)
     B, C, H, W, D = x.shape
     assert C == self.in_ch
     out_ch = self.out_ch if self.out_ch else self.in_ch
