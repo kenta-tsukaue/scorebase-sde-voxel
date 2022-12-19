@@ -167,8 +167,8 @@ class DDPM(nn.Module):
       for i_block in range(self.num_res_blocks + 1):
         print('at 160',i_level,i_block,h.shape)
         print("hの形は" + str(h.shape))
-        print("hs.popの形は" + str(hs.pop().shape))
-        print("catは", torch.cat([h, hs.pop()], dim=1).shape)
+        print("hs.popの形は" + str(hs[-1].shape))
+        print("catは", torch.cat([h, hs[-1]], dim=1).shape)
         h = modules[m_idx](torch.cat([h, hs.pop()], dim=1), temb)
         m_idx += 1
 #      if h.shape[-2] in self.attn_resolutions:  #  use y dim
