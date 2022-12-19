@@ -137,6 +137,7 @@ class DDPM(nn.Module):
     hs = [modules[m_idx](h)]
 #    print('at 134',hs[-1].shape)
     m_idx += 1
+    print("num_resolutionの数は", self.num_resolutions)
     for i_level in range(self.num_resolutions):
       # Residual blocks for this resolution
       for i_block in range(self.num_res_blocks):
