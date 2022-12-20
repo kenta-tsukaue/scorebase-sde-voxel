@@ -90,11 +90,11 @@ def get_sde_loss_fn(sde, train, reduce_mean=True, continuous=True, likelihood_we
     #このscoreは結局何を出しているかと言うと、加えたノイズを出している
 
     if not likelihood_weighting:
-      losses = torch.square(score * std[:, None, None, None] + z) #　スコアは加えたノイズを予想、zは加えたノイズなのでそれを比べるとロスが出る
+      losses = torch.square(score * std[:, None, None, None, None] + z) #　スコアは加えたノイズを予想、zは加えたノイズなのでそれを比べるとロスが出る
       losses = reduce_op(losses.reshape(losses.shape[0], -1), dim=-1)
     else:
       g2 = sde.sde(torch.zeros_like(batch), t)[1] ** 2
-      losses = torch.square(score + z / std[:, None, None, None])
+      losses = torch.square(score + z / std[:, None, None, None, None])
       losses = reduce_op(losses.reshape(losses.shape[0], -1), dim=-1) * g2
 
     loss = torch.mean(losses)
