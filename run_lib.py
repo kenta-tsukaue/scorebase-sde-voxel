@@ -179,7 +179,7 @@ def train(config, workdir):
           sample = np.clip(sample.cpu().numpy() * 255, 0, 255).astype(np.uint8) #画像用に補正
           #print(sample.shape) (32, 1, 32, 32, 32)
 
-          for i in range(batch.shape[0]):
+          for i in range(10):
             for j in range(batch.shape[2]):
               Image.fromarray(sample[i][0][j]).save(this_sample_dir + "/" + str(i+1) + "_channel" + str(j+1) + ".png")
         else:
