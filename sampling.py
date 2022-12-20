@@ -183,7 +183,7 @@ class EulerMaruyamaPredictor(Predictor):
     z = torch.randn_like(x)
     drift, diffusion = self.rsde.sde(x, t)
     x_mean = x + drift * dt
-    x = x_mean + diffusion[:, None, None, None] * np.sqrt(-dt) * z
+    x = x_mean + diffusion[:, None, None, None, None] * np.sqrt(-dt) * z
     return x, x_mean
 
 
