@@ -177,11 +177,12 @@ def train(config, workdir):
           this_sample_dir = os.path.join(sample_dir, "iter_{}".format(step))
           tf.io.gfile.makedirs(this_sample_dir)
           sample = np.clip(sample.cpu().numpy() * 255, 0, 255).astype(np.uint8) #画像用に補正
-          
+          print(sample.shape)
+          """
           for i in range(batch.shape[0]):
             for j in range(config.data.num_channels):
               Image.fromarray(sample[i][j]).save(this_sample_dir + "/" + str(i+1) + "_channel" + str(j+1) + ".png")
-            
+          """
         else:
           ema.store(score_model.parameters())
           ema.copy_to(score_model.parameters())
