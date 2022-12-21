@@ -137,19 +137,19 @@ class DDPM(nn.Module):
     h = modules[m_idx](h)
     hs = [h]
     m_idx += 1
-    #print("====================ダウンサンプリング始まります！========================")
+    #print("====================ダウンサンプリング開始========================")
     #print("141行 : hの初期値の形は", h.shape)
     ##print("num_resolutionの数は", self.num_resolutions)
     for i_level in range(self.num_resolutions):
       # Residual blocks for this resolution
       for i_block in range(self.num_res_blocks):
-        #print("\n\n\n\n=========================始まりまーす=========================")
+        #print("\n\n\n\n======================ブロック開始=========================")
         #print(modules[m_idx])
         h = modules[m_idx](hs[-1], temb)
         #print("149行 : hの形は", h.shape)
         m_idx += 1
         if h.shape[-3] in self.attn_resolutions:  #  use x dim
-          #print("152行 : attn_resolutions入りまーす")
+          #print("152行 : attn_resolutions")
           h = modules[m_idx](h)
           #print(modules[m_idx])
           #print("155行目 : hの形は", h.shape)
@@ -157,7 +157,7 @@ class DDPM(nn.Module):
         
         hs.append(h)
       if i_level != self.num_resolutions - 1:
-        #print("num_resolution入りまーす")
+        #print("num_resolution")
         #print(modules[m_idx])
         #print("162行目 : hの形は", h.shape)
         hs.append(modules[m_idx](hs[-1]))
@@ -181,10 +181,10 @@ class DDPM(nn.Module):
     m_idx += 1
 
     # Upsampling block
-    #print("\n\n\n====================アップサンプリング始まります！===================\n\n\n")
+    #print("\n\n\n====================アップサンプリング開始===================\n\n\n")
     for i_level in reversed(range(self.num_resolutions)):
       for i_block in range(self.num_res_blocks + 1):
-        #print("\n\n\n\n=========================始まりまーす====================")
+        #print("\n\n\n\n=====================ブロック開始====================")
         #print('188行 : ',i_level,i_block)
         #print("189行 : hの形は", h.shape)
         #print("190行 : hsの形は", hs[-1].shape)
@@ -201,7 +201,7 @@ class DDPM(nn.Module):
         #print("201行 : hの形は", h.shape)
         m_idx += 1
       if i_level != 0:
-        #print("204行 : 入りまーす")
+        #print("204行 : 入ります")
         #print(modules[m_idx])
         h = modules[m_idx](h)
         #print("207行 : hの形は", h.shape)
