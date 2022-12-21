@@ -132,10 +132,10 @@ class DDPM(nn.Module):
     else:
       # Input is in [0, 1]
       h = 2 * x - 1.
-
     # Downsampling block
     print("137行 : hの形は", h.shape)
-    hs = [modules[m_idx](h)]
+    h = modules[m_idx](h)
+    hs = [h]
     m_idx += 1
     print("====================ダウンサンプリング始まります！========================")
     print("141行 : hの初期値の形は", h.shape)
