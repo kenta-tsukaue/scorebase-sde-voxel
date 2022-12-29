@@ -620,7 +620,7 @@ class Downsample(nn.Module):
       x = self.Conv_0(x)
 #      print('at 616 x=',x.shape) # ; raise RuntimeError
     else:
-      x = F.avg_pool2d(x, kernel_size=2, stride=2, padding=0)
+      x = F.avg_pool3d(x, kernel_size=(2, 2, 2), padding=0) #ここが怪し過ぎる！！！
 #      print('at 619 x=',x.shape) # ; raise RuntimeError
 
 #    print('x=',x.shape,(B,C,H,W,D)); raise RuntimeError
