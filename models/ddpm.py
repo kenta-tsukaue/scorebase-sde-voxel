@@ -48,7 +48,7 @@ class DDPM(nn.Module):
     ch_mult = config.model.ch_mult # (1, 2, 2, 2)
     self.num_res_blocks = num_res_blocks = config.model.num_res_blocks #2
     self.attn_resolutions = attn_resolutions = config.model.attn_resolutions #(16,)
-#    #print('attn_resolutions=',attn_resolutions)
+#    ##print('attn_resolutions=',attn_resolutions)
     dropout = config.model.dropout # 0.1
     resamp_with_conv = config.model.resamp_with_conv # True
     self.num_resolutions = num_resolutions = len(ch_mult)# 4
@@ -111,7 +111,7 @@ class DDPM(nn.Module):
 
   def forward(self, x, labels):
     modules = self.all_modules
-    print("114行 : モジュールたちは\n",modules)
+    #print("114行 : モジュールたちは\n",modules)
     
     m_idx = 0
     if self.conditional: #True
@@ -133,90 +133,90 @@ class DDPM(nn.Module):
       # Input is in [0, 1]
       h = 2 * x - 1.
     # Downsampling block
-    #print("137行 : hの形は", h.shape)
+    ##print("137行 : hの形は", h.shape)
     h = modules[m_idx](h)
     hs = [h]
     m_idx += 1
-    #print("====================ダウンサンプリング開始========================")
-    #print("141行 : hの初期値の形は", h.shape)
-    ##print("num_resolutionの数は", self.num_resolutions)
+    ##print("====================ダウンサンプリング開始========================")
+    ##print("141行 : hの初期値の形は", h.shape)
+    ###print("num_resolutionの数は", self.num_resolutions)
     for i_level in range(self.num_resolutions):
       # Residual blocks for this resolution
       for i_block in range(self.num_res_blocks):
-        #print("\n\n\n\n======================ブロック開始=========================")
-        #print(modules[m_idx])
+        ##print("\n\n\n\n======================ブロック開始=========================")
+        ##print(modules[m_idx])
         h = modules[m_idx](hs[-1], temb)
-        #print("149行 : hの形は", h.shape)
+        ##print("149行 : hの形は", h.shape)
         m_idx += 1
         if h.shape[-3] in self.attn_resolutions:  #  use x dim
-          #print("152行 : attn_resolutions")
+          ##print("152行 : attn_resolutions")
           h = modules[m_idx](h)
-          #print(modules[m_idx])
-          #print("155行目 : hの形は", h.shape)
+          ##print(modules[m_idx])
+          ##print("155行目 : hの形は", h.shape)
           m_idx += 1
         
         hs.append(h)
       if i_level != self.num_resolutions - 1:
-        #print("num_resolution")
-        #print(modules[m_idx])
-        #print("162行目 : hの形は", h.shape)
+        ##print("num_resolution")
+        ##print(modules[m_idx])
+        ##print("162行目 : hの形は", h.shape)
         hs.append(modules[m_idx](hs[-1]))
         m_idx += 1
     
-    #print("\n\n\n=============================ダウンサンプリング終了========================\n\n\n")
-    #print("167行 : ダウンサンプリング終了後のhの形は", h.shape)
+    ##print("\n\n\n=============================ダウンサンプリング終了========================\n\n\n")
+    ##print("167行 : ダウンサンプリング終了後のhの形は", h.shape)
     h = hs[-1]
-    #print("169行 : hの形は", h.shape)
-    #print(modules[m_idx])
+    ##print("169行 : hの形は", h.shape)
+    ##print(modules[m_idx])
     h = modules[m_idx](h, temb)
-    #print("172行 : hの形は", h.shape)
+    ##print("172行 : hの形は", h.shape)
     m_idx += 1
-    #print(modules[m_idx])
+    ##print(modules[m_idx])
     h = modules[m_idx](h)
-    #print("176行 : hの形は", h.shape)
+    ##print("176行 : hの形は", h.shape)
     m_idx += 1
-    #print(modules[m_idx])
+    ##print(modules[m_idx])
     h = modules[m_idx](h, temb)
-    #print("180行 : hの形は", h.shape)
+    ##print("180行 : hの形は", h.shape)
     m_idx += 1
 
     # Upsampling block
-    #print("\n\n\n====================アップサンプリング開始===================\n\n\n")
+    ##print("\n\n\n====================アップサンプリング開始===================\n\n\n")
     for i_level in reversed(range(self.num_resolutions)):
       for i_block in range(self.num_res_blocks + 1):
-        #print("\n\n\n\n=====================ブロック開始====================")
-        #print('188行 : ',i_level,i_block)
-        #print("189行 : hの形は", h.shape)
-        #print("190行 : hsの形は", hs[-1].shape)
-        #print("191行 : catは", torch.cat([h, hs[-1]], dim=1).shape)
-        #print(modules[m_idx])
+        ##print("\n\n\n\n=====================ブロック開始====================")
+        ##print('188行 : ',i_level,i_block)
+        ##print("189行 : hの形は", h.shape)
+        ##print("190行 : hsの形は", hs[-1].shape)
+        ##print("191行 : catは", torch.cat([h, hs[-1]], dim=1).shape)
+        ##print(modules[m_idx])
         h = modules[m_idx](torch.cat([h, hs.pop()], dim=1), temb)
-        #print("194行 : hの形は", h.shape)
+        ##print("194行 : hの形は", h.shape)
         m_idx += 1
 #      if h.shape[-2] in self.attn_resolutions:  #  use y dim
       if h.shape[-3] in self.attn_resolutions:  #  use x dim
-        #print("198行 : attn_resolutions入りまーす")
-        #print(modules[m_idx])
+        ##print("198行 : attn_resolutions入りまーす")
+        ##print(modules[m_idx])
         h = modules[m_idx](h)
-        #print("201行 : hの形は", h.shape)
+        ##print("201行 : hの形は", h.shape)
         m_idx += 1
       if i_level != 0:
-        #print("204行 : 入ります")
-        #print(modules[m_idx])
+        ##print("204行 : 入ります")
+        ##print(modules[m_idx])
         h = modules[m_idx](h)
-        #print("207行 : hの形は", h.shape)
+        ##print("207行 : hの形は", h.shape)
         m_idx += 1
-    #print("\n\n\n====================アップサンプリング終了！===================\n\n\n")
+    ##print("\n\n\n====================アップサンプリング終了！===================\n\n\n")
 
-    #print("211行 : アップサンプリング終了後のhの形は", h.shape)
+    ##print("211行 : アップサンプリング終了後のhの形は", h.shape)
     assert not hs
-    #print(modules[m_idx])
+    ##print(modules[m_idx])
     h = self.act(modules[m_idx](h))
-    #print("207行 : hの形は", h.shape)
+    ##print("207行 : hの形は", h.shape)
     m_idx += 1
-    #print(modules[m_idx])
+    ##print(modules[m_idx])
     h = modules[m_idx](h)
-    #print("207行 : hの形は", h.shape)
+    ##print("207行 : hの形は", h.shape)
     m_idx += 1
     assert m_idx == len(modules)
 
@@ -226,5 +226,5 @@ class DDPM(nn.Module):
       # so no need of doing it here.
       used_sigmas = self.sigmas[labels, None, None, None]
       h = h / used_sigmas
-    #print("229行 : 最終のhの形は", h.shape)
+    ##print("229行 : 最終のhの形は", h.shape)
     return h
