@@ -145,7 +145,7 @@ def train(config, workdir):
     if step == 1:
       for i in range(32):
         for j in range(32):
-          print(batch[0][i][j])
+          print(batch[0][0][i][j])
   
    # batch = scaler(batch)
 
