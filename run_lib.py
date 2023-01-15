@@ -142,11 +142,12 @@ def train(config, workdir):
     batch = torch.unsqueeze(batch,dim=-4)  #  add channel axis for debug
     #print(batch.shape)
     #バッチの詳細を表示するためのもの
+    """
     if step == 1:
       for i in range(32):
         for j in range(32):
           print(batch[0][0][i][j])
-  
+    """
    # batch = scaler(batch)
 
 
