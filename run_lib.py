@@ -182,6 +182,7 @@ def train(config, workdir):
           ema.store(score_model.parameters())
           ema.copy_to(score_model.parameters())
           sample, n = sampling_fn(score_model)
+          sample_np = sample
           ema.restore(score_model.parameters())
           this_sample_dir = os.path.join(sample_dir, "iter_{}".format(step))
           tf.io.gfile.makedirs(this_sample_dir)
@@ -191,6 +192,11 @@ def train(config, workdir):
           for i in range(10):
             for j in range(32):
               Image.fromarray(sample[i][0][j]).save(this_sample_dir + "/" + str(i+1) + "_channel" + str(j+1) + ".png")
+
+          for i in range(32):
+            with tf.io.gfile.GFile(
+                os.path.join(this_sample_dir, "sample" + str(i+1)+ ".np"), "wb") as fout:
+              np.save(fout, sample_np[i][0])
         else:
           ema.store(score_model.parameters())
           ema.copy_to(score_model.parameters())
