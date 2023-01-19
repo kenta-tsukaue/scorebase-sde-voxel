@@ -131,18 +131,19 @@ def train(config, workdir):
     batch = torch.from_numpy(next(train_iter)['image']._numpy()).to(config.device).float()
     #print(batch.shape)
     batch = torch.where(batch > 0, 255, 128)
+    """
     for i in range(32):
       print("===================[",i+1, "]チャネル目==================")
       for j in range(32):
-        print(batch[0][i][j])
-    """
+        print(batch[0][i][j])"""
+    
     if step == 1:
       #batch = batch.permute(0, 3, 1, 2)
       input_batch = np.clip(batch.cpu().numpy(), 0, 255).astype(np.uint8) #画像用に補正
       input_dir = "./input"
       for i in range(10):
         for j in range(32):
-            Image.fromarray(input_batch[i][j]).save( input_dir + "/" + str(i+1) + "_channel" + str(j+1) + ".png")"""
+            Image.fromarray(input_batch[i][j]).save( input_dir + "/" + str(i+1) + "_channel" + str(j+1) + ".png")
     batch = scaler(batch)
 
     batch = torch.unsqueeze(batch,dim=-4)  #  add channel axis for debug
