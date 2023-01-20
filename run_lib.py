@@ -130,7 +130,7 @@ def train(config, workdir):
     # Convert data to JAX arrays and normalize them. Use ._numpy() to avoid copy.
     batch = torch.from_numpy(next(train_iter)['image']._numpy()).to(config.device).float()
     #print(batch.shape)
-    batch = torch.where(batch > 0, 255, 128)
+    #batch = torch.where(batch > 0, 255, 128)
     """
     for i in range(32):
       print("===================[",i+1, "]チャネル目==================")
