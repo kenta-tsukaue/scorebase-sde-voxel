@@ -202,7 +202,7 @@ def train(config, workdir):
             for j in range(32):
               Image.fromarray(sample[i][0][j]).save(this_sample_dir + "/" + str(i+1) + "_channel" + str(j+1) + ".png")
 
-          for i in range(16):
+          for i in range(100):
             with tf.io.gfile.GFile(
                 os.path.join(this_sample_dir, "sample" + str(i+1)+ ".np"), "wb") as fout:
               np.save(fout, sample_np[i][0])
