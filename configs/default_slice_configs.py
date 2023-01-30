@@ -45,7 +45,7 @@ def get_default_configs():
   data.centered = False
   data.uniform_dequantization = False
   data.num_channels = 1
-  data.data_file = "data_set_voxel10"
+  data.data_file = "data_set_yasudak-2-2"
 
   # model
   config.model = model = ml_collections.ConfigDict()

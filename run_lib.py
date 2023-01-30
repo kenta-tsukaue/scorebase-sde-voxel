@@ -42,6 +42,7 @@ from utils import save_checkpoint, restore_checkpoint
 FLAGS = flags.FLAGS
 
 
+
 def train(config, workdir):
   """Runs the training pipeline.
 
@@ -132,7 +133,7 @@ def train(config, workdir):
     # Convert data to JAX arrays and normalize them. Use ._numpy() to avoid copy.
     batch = torch.from_numpy(next(train_iter)['image']._numpy()).to(config.device).float()
     #print(batch.shape)
-    #batch = torch.where(batch > 0, 255, 128)
+    #batch = torch.where(batch > 0, 1, 0) #1か2に変更
     """
     for i in range(32):
       print("===================[",i+1, "]チャネル目==================")
@@ -202,7 +203,7 @@ def train(config, workdir):
             for j in range(32):
               Image.fromarray(sample[i][0][j]).save(this_sample_dir + "/" + str(i+1) + "_channel" + str(j+1) + ".png")
 
-          for i in range(100):
+          for i in range(16):
             with tf.io.gfile.GFile(
                 os.path.join(this_sample_dir, "sample" + str(i+1)+ ".np"), "wb") as fout:
               np.save(fout, sample_np[i][0])
