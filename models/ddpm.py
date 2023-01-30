@@ -111,7 +111,7 @@ class DDPM(nn.Module):
 
   def forward(self, x, labels):
     modules = self.all_modules
-    #print("114行 : モジュールたちは\n",modules)
+    print("114行 : モジュールたちは\n",modules)
     
     m_idx = 0
     if self.conditional: #True
