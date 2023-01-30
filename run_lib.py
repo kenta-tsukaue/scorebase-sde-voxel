@@ -147,7 +147,7 @@ def train(config, workdir):
       for i in range(10):
         for j in range(32):
             Image.fromarray(input_batch[i][j]).save( input_dir + "/" + str(i+1) + "_channel" + str(j+1) + ".png")
-    batch = scaler(batch)
+    #batch = scaler(batch)
 
     batch = torch.unsqueeze(batch,dim=-4)  #  add channel axis for debug
     #print(batch.shape)
@@ -173,8 +173,8 @@ def train(config, workdir):
     # Report the loss on an evaluation dataset periodically
     if step % config.training.eval_freq == 0:
       eval_batch = torch.from_numpy(next(eval_iter)['image']._numpy()).to(config.device).float()
-      eval_batch = eval_batch.permute(0, 3, 1, 2)
-      eval_batch = scaler(eval_batch)
+      #eval_batch = eval_batch.permute(0, 3, 1, 2)
+      #eval_batch = scaler(eval_batch)
       eval_batch = torch.unsqueeze(eval_batch,dim=-4)  #  add channel axis for debug
       eval_loss = eval_step_fn(state, eval_batch)
       logging.info("step: %d, eval_loss: %.5e" % (step, eval_loss.item()))
