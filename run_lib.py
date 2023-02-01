@@ -115,10 +115,10 @@ def train(config, workdir):
   
   # Building sampling functions 
   if config.training.snapshot_sampling:
-    sampling_shape = (config.training.batch_size, config.data.num_channels,
-                      config.data.image_size, config.data.image_size, config.data.image_size)
-    #sampling_shape = (100, config.data.num_channels,
+    #sampling_shape = (config.training.batch_size, config.data.num_channels,
     #                  config.data.image_size, config.data.image_size, config.data.image_size)
+    sampling_shape = (100, config.data.num_channels,
+                      config.data.image_size, config.data.image_size, config.data.image_size)
     sampling_fn = sampling.get_sampling_fn(config, sde, sampling_shape, inverse_scaler, sampling_eps)
 
   num_train_steps = config.training.n_iters
@@ -203,7 +203,7 @@ def train(config, workdir):
             for j in range(32):
               Image.fromarray(sample[i][0][j]).save(this_sample_dir + "/" + str(i+1) + "_channel" + str(j+1) + ".png")
 
-          for i in range(16):
+          for i in range(100):
             with tf.io.gfile.GFile(
                 os.path.join(this_sample_dir, "sample" + str(i+1)+ ".np"), "wb") as fout:
               np.save(fout, sample_np[i][0])
