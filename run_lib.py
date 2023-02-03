@@ -133,33 +133,14 @@ def train(config, workdir):
     # Convert data to JAX arrays and normalize them. Use ._numpy() to avoid copy.
     batch = torch.from_numpy(next(train_iter)['image']._numpy()).to(config.device).float()
     #print(batch.shape)
-    batch = torch.where(batch > 0, 255, 128) 
-    """
-    for i in range(32):
-      print("===================[",i+1, "]チャネル目==================")
-      for j in range(32):
-        print(batch[0][i][j])"""
+
+    """[普通の場合は必要]"""
+    #batch = torch.where(batch > 0, 255, 128) 
     
-    if step == 1:
-      #batch = batch.permute(0, 3, 1, 2)
-      input_batch = np.clip(batch.cpu().numpy(), 0, 255).astype(np.uint8) #画像用に補正
-      input_dir = "./input"
-      for i in range(10):
-        for j in range(32):
-            Image.fromarray(input_batch[i][j]).save( input_dir + "/" + str(i+1) + "_channel" + str(j+1) + ".png")
-    batch = scaler(batch)
+    """[普通の場合はスケーラーは必要]"""
+    #batch = scaler(batch)
 
     batch = torch.unsqueeze(batch,dim=-4)  #  add channel axis for debug
-    #print(batch.shape)
-    #バッチの詳細を表示するためのもの
-    """
-    if step == 1:
-      for i in range(32):
-        for j in range(32):
-          print(batch[0][0][i][j])
-    """
-   # batch = scaler(batch)
-
 
     # Execute one training step
     loss = train_step_fn(state, batch)
@@ -173,8 +154,10 @@ def train(config, workdir):
     # Report the loss on an evaluation dataset periodically
     if step % config.training.eval_freq == 0:
       eval_batch = torch.from_numpy(next(eval_iter)['image']._numpy()).to(config.device).float()
-      #eval_batch = eval_batch.permute(0, 3, 1, 2)
+      
+      """[普通の場合はスケーラーは必要]"""
       #eval_batch = scaler(eval_batch)
+    
       eval_batch = torch.unsqueeze(eval_batch,dim=-4)  #  add channel axis for debug
       eval_loss = eval_step_fn(state, eval_batch)
       logging.info("step: %d, eval_loss: %.5e" % (step, eval_loss.item()))
@@ -198,15 +181,18 @@ def train(config, workdir):
           tf.io.gfile.makedirs(this_sample_dir)
           sample = np.clip(sample.cpu().numpy() * 255, 0, 255).astype(np.uint8) #画像用に補正
           #print(sample.shape) (32, 1, 32, 32, 32)
-
+          
+          """[スライス画像を出したい場合は入れる]
           for i in range(10):
             for j in range(32):
               Image.fromarray(sample[i][0][j]).save(this_sample_dir + "/" + str(i+1) + "_channel" + str(j+1) + ".png")
+          """
 
           for i in range(100):
             with tf.io.gfile.GFile(
                 os.path.join(this_sample_dir, "sample" + str(i+1)+ ".np"), "wb") as fout:
               np.save(fout, sample_np[i][0])
+          
         else:
           ema.store(score_model.parameters())
           ema.copy_to(score_model.parameters())
