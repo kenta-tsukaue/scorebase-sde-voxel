@@ -44,8 +44,8 @@ def get_default_configs():
   data.random_flip = True
   data.centered = False
   data.uniform_dequantization = False
-  data.num_channels = 1
-  data.data_file = "data_set_voxel10_3_pot"
+  data.num_channels = 3
+  data.data_file = "data_set_GPCR_1"
 
   # model
   config.model = model = ml_collections.ConfigDict()

@@ -139,8 +139,9 @@ def train(config, workdir):
     
     """[普通の場合はスケーラーは必要]"""
     #batch = scaler(batch)
-
-    batch = torch.unsqueeze(batch,dim=-4)  #  add channel axis for debug
+    
+    """[次元追加]"""
+    #batch = torch.unsqueeze(batch,dim=-4)  #  add channel axis for debug
 
     # Execute one training step
     loss = train_step_fn(state, batch)
@@ -157,8 +158,8 @@ def train(config, workdir):
       
       """[普通の場合はスケーラーは必要]"""
       #eval_batch = scaler(eval_batch)
-    
-      eval_batch = torch.unsqueeze(eval_batch,dim=-4)  #  add channel axis for debug
+      """[次元追加]"""
+      #eval_batch = torch.unsqueeze(eval_batch,dim=-4)  #  add channel axis for debug
       eval_loss = eval_step_fn(state, eval_batch)
       logging.info("step: %d, eval_loss: %.5e" % (step, eval_loss.item()))
 
