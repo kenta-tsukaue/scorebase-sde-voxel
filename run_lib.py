@@ -139,7 +139,7 @@ def train(config, workdir):
     
     """[普通の場合はスケーラーは必要]"""
     #batch = scaler(batch)
-    
+
     """[次元追加]"""
     #batch = torch.unsqueeze(batch,dim=-4)  #  add channel axis for debug
 
@@ -192,7 +192,7 @@ def train(config, workdir):
           for i in range(100):
             with tf.io.gfile.GFile(
                 os.path.join(this_sample_dir, "sample" + str(i+1)+ ".np"), "wb") as fout:
-              np.save(fout, sample_np[i][0])
+              np.save(fout, sample_np[i])
           
         else:
           ema.store(score_model.parameters())
