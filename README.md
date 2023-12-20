@@ -1,2 +1,8 @@
-# Score-Based Generative Modeling through Stochastic Differential Equations
+構成
+０タイトル
+１概要（画像をと一緒に）
+２手法
+３実験（データセット・学習方法）
+
+#確率微分方程式とスコアマッチングによる3Dオブジェクトの生成
 
