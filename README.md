@@ -14,7 +14,7 @@
 
 そこで私は誰もが簡単に3Dオブジェクトを生成できるAIを開発したいと考えこの研究に至りました。
 
-##手法
+## 手法
 ![3D voxel data that are made by ai](https://www.brainpad.co.jp/doors/wp/wp-content/uploads/2023/10/generative_ai_picture1-1024x585.png)
 
 
